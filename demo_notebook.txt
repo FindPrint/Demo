@@ -1,10 +1,21 @@
+notebook démo, avec :  
+- Code corrigé et uniforme (variables cohérentes).  
+- Explications bilingues (🇫🇷 Français / 🇬🇧 English).  
+- Une section finale d’explication d’utilisation en FR/EN pour guider les utilisateurs.  
+
+---
+
+<AttachedDocument filename="demoequationbilingue.txt" IsTruncated="false" status="ready">
+
 ============================================================
 Bloc 1 — Import des librairies / Block 1 — Library imports
 ============================================================
 
-```python
-# Demo: Stochastic equation with memory and dynamic dimension
-# Minimal Colab prototype
+`python
+
+Demo: Stochastic equation with memory and dynamic dimension
+
+Minimal Colab prototype
 
 import numpy as np
 import pandas as pd
@@ -12,104 +23,89 @@ import matplotlib.pyplot as plt
 from scipy.fft import rfft, rfftfreq
 
 print("✅ Libraries loaded. Upload your CSV in the next cell or use the example dataset.")
+`
 
----
 🇫🇷 Ce bloc importe les bibliothèques nécessaires : NumPy pour les calculs, Pandas pour les données, Matplotlib pour les graphiques, et SciPy pour l’analyse spectrale.  
 🇬🇧 This block imports the required libraries: NumPy for calculations, Pandas for data handling, Matplotlib for plotting, and SciPy for spectral analysis.
 
 
+============================================================
+Bloc 2 — Chargement et nettoyage automatique du CSV / Data loading & cleaning
+============================================================
 
-
-# 📂 Bloc 2 — Chargement et nettoyage automatique du CSV
-
+`python
 import pandas as pd
 import numpy as np
 
-# Exemple intégré si aucun fichier n'est uploadé
+Exemple intégré si aucun fichier n'est uploadé
 example = pd.DataFrame({
     "time": np.linspace(0, 10, 500),
-    "signal": np.sin(2*np.pi*0.5*np.linspace(0, 10, 500)) + 0.1*np.random.randn(500)
+    "signal": np.sin(2np.pi0.5np.linspace(0, 10, 500)) + 0.1np.random.randn(500)
 })
 example.to_csv("example.csv", index=False)
 
 print("👉 You can upload your own CSV (at least 2 columns), or use the example.csv provided.")
 
-# Upload via Colab
+Upload via Colab
 try:
     from google.colab import files
     uploaded = files.upload()
 except ImportError:
     uploaded = {}
 
-# Si un fichier est uploadé, on le lit, sinon on prend l'exemple
+Si un fichier est uploadé, on le lit, sinon on prend l'exemple
 if uploaded:
     filename = list(uploaded.keys())[0]
     df = pd.read_csv(filename)
 else:
     df = pd.read_csv("example.csv")
 
-# ✅ Normalisation automatique
+✅ Normalisation automatique
 if df.shape[1] < 2:
     raise ValueError("❌ Your CSV must contain at least 2 columns.")
 
-# On garde seulement les 2 premières colonnes
+On garde seulement les 2 premières colonnes
 df = df.iloc[:, :2]
 
-# On renomme en 't' et 'phi'
+On renomme en 't' et 'phi'
 df.columns = ['t', 'phi']
 
-# On supprime les valeurs manquantes
+On supprime les valeurs manquantes
 df = df.dropna().reset_index(drop=True)
 
-# Vérification des types numériques
+Vérification des types numériques
 if not np.issubdtype(df['t'].dtype, np.number) or not np.issubdtype(df['phi'].dtype, np.number):
     raise TypeError("⚠️ Error: Columns 't' and 'phi' must contain numeric values only.")
 
-# Extraction des vecteurs
+Extraction des vecteurs
 t = df['t'].values
 phi = df['phi'].values
 
 print("✅ Data loaded and cleaned:", df.shape)
 print(df.head())
+`
 
----
-🇫🇷 Description (Français)
-Ce bloc gère automatiquement l’importation et la préparation des données :  
-- Il propose un jeu de données exemple (sinusoïde bruitée) si l’utilisateur ne charge rien.  
-- Il permet à l’utilisateur d’uploader son propre fichier CSV.  
-- Il standardise les données en ne gardant que les deux premières colonnes, renommées en t (temps) et phi (signal).  
-- Il supprime les lignes vides et vérifie que les colonnes contiennent bien des valeurs numériques.  
-- Enfin, il affiche un aperçu des données nettoyées et les stocke dans deux vecteurs t et phi pour la suite de la démo.  
+🇫🇷 Ce bloc gère automatiquement l’importation et la préparation des données : jeu de données exemple si rien n’est uploadé, upload CSV possible, standardisation en t et phi, suppression des valeurs manquantes, vérification des types numériques.  
+🇬🇧 This block automatically handles data import and preparation: example dataset if nothing is uploaded, CSV upload option, standardization into t and phi, removal of missing values, numeric type checking.
 
-👉 Résultat : l’utilisateur n’a pas besoin de préparer ou trier son CSV, le bloc s’occupe de tout.  
 
----
-
-🇬🇧 Description (English)
-This block automatically handles data import and preparation:  
-- It provides an example dataset (noisy sine wave) if the user does not upload anything.  
-- It allows the user to upload their own CSV file.  
-- It standardizes the data by keeping only the first two columns, renaming them t (time) and phi (signal).  
-- It removes missing values and checks that both columns contain numeric values.  
-- Finally, it displays a preview of the cleaned data and stores them in two vectors t and phi for the rest of the demo.  
-
-👉 Result: the user does not need to prepare or sort their CSV, the block takes care of everything.  
-
----
-------------------------------------------------------------
+============================================================
 Bloc 3 — Calcul de l’amplitude observée / Block 3 — Observed amplitude
 ============================================================
-# Amplitude observée = moyenne absolue sur les 20% finaux
-phi_final = phi[int(0.8 * len(phi)):]
-amp_obs = np.mean(np.abs(phi_final))
-print("Observed amplitude:", amp_obs)
 
----
+`python
+
+Amplitude observée = moyenne absolue sur les 20% finaux
+phi_final = phi[int(0.8 * len(phi)):]
+ampobs = np.mean(np.abs(phifinal))
+print("Observed amplitude:", amp_obs)
+`
+
 🇫🇷 Ce bloc calcule l’amplitude observée en prenant la moyenne absolue des 20% derniers points de la série.  
 🇬🇧 This block computes the observed amplitude by averaging the absolute values of the last 20% of the series.
 
 
-------------------------------------------------------------
+============================================================
 Bloc 4 — Estimation de αmean et amplitude théorique / Block 4 — αmean estimation and theoretical amplitude
 ============================================================
 
@@ -133,7 +129,8 @@ print("Theoretical amplitude:", amp_theo)
 🇫🇷 Ce bloc estime α_mean à partir de la fréquence dominante du signal, applique un facteur d’échelle, et calcule l’amplitude théorique correspondante.  
 🇬🇧 This block estimates α_mean from the dominant frequency of the signal, applies a scaling factor, and computes the corresponding theoretical amplitude.
 
-------------------------------------------------------------
+
+============================================================
 Bloc 5 — Visualisation et erreur relative / Block 5 — Visualization and relative error
 ============================================================
 
@@ -158,3 +155,45 @@ print("Relative error:", f"{error:.2%}" if error is not None else "N/A")
 
 🇫🇷 Ce bloc trace le signal réel, l’amplitude observée et l’amplitude théorique, puis calcule l’erreur relative entre les deux.  
 🇬🇧 This block plots the real signal, the observed amplitude, and the theoretical amplitude, then computes the relative error between them.
+
+
+============================================================
+Explication d’utilisation / Usage instructions
+============================================================
+
+🇫🇷 Comment utiliser ce notebook :  
+1. Ouvrez le notebook dans Google Colab (via le badge Colab dans le README).  
+2. Cliquez sur Runtime → Run all pour exécuter toutes les cellules.  
+3. Vous pouvez soit :  
+   - utiliser le dataset exemple généré automatiquement (example.csv),  
+   - uploader votre propre CSV (au moins 2 colonnes : temps, valeur).  
+4. Le notebook calcule :  
+   - l’amplitude observée,  
+   - α_mean (méthode spectrale),  
+   - l’amplitude théorique,  
+   - l’erreur relative,  
+   - et trace un graphe comparatif.  
+
+👉 Résultat : vous obtenez une comparaison directe entre vos données et la prédiction du modèle.  
+
+---
+
+🇬🇧 How to use this notebook:  
+1. Open the notebook in Google Colab (via the Colab badge in the README).  
+2. Click Runtime → Run all to execute all cells.  
+3. You can either:  
+   - use the automatically generated example dataset (example.csv),  
+   - upload your own CSV (at least 2 columns: time, value).  
+4. The notebook computes:  
+   - the observed amplitude,  
+   - α_mean (spectral method),  
+   - the theoretical amplitude,  
+   - the relative error,  
+   - and plots a comparison graph.  
+
+👉 Result: you get a direct comparison between your data and the model’s prediction.  
+
+</AttachedDocument>
+
+---
+
