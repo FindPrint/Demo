@@ -4,7 +4,8 @@ A stochastic equation with memory and dynamic effective dimension — from specu
 # 🌐 Démo — Équation stochastique avec mémoire et dimension dynamique  
 # 🌐 Demo — Stochastic equation with memory and dynamic dimension  
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/FindPrint/demo-equation/blob/main/demo_notebook.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](
+https://colab.research.google.com/github/FindPrint/Demo/blob/main/demo_notebook.ipynb))
 
 ---
 
