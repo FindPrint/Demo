@@ -5,7 +5,7 @@ A stochastic equation with memory and dynamic effective dimension — from specu
 # 🌐 Demo — Stochastic equation with memory and dynamic dimension  
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](
-https://colab.research.google.com/github/blod/FindPrint/Demo/main/demo_notebook.ipynb))
+https://colab.research.google.com/github/"blod"/FindPrint/Demo/main/demo_notebook.ipynb))
 
 ---
 
